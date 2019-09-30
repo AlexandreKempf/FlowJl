@@ -1,0 +1,24 @@
+args:
+
+kwargs:
+  data_path: "/home/alex/awesome/FlowJl/datasets/data.yaml"
+  int: 32
+
+flow:
+  -
+    f: load_data
+    args:
+      - data_path
+    out:
+      - data
+      - classes
+  -
+    f: return_int
+    args:
+      - int
+    out:
+      - a
+out:
+    - data
+    - classes
+    - a

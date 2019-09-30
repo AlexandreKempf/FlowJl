@@ -1,0 +1,23 @@
+args:
+  - data_p
+
+kwargs:
+  intmax: 60
+
+flow:
+  -
+    f: load_data
+    args:
+      - data_p
+    kwargs:
+      param: 32
+      param2: :intmax
+    out:
+      - data
+      - classes
+      - param3
+      - param4
+
+out:
+  - param3
+  - param4
