@@ -11,7 +11,6 @@ function load_data(path)
     root = get(data, "root", "");
     labels = get(data, "labels", repeat([nothing], length(inputs)));
     classes = get(data, "classes", []);
-
     return [el for el in zip(inputs, labels)], classes
 end
 

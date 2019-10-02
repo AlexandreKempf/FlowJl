@@ -1,6 +1,17 @@
-push!(LOAD_PATH, "/home/alex/awesome/FlowJl/ops");
+OPS_PATH = "/home/alex/awesome/FlowJl/ops";
+push!(LOAD_PATH, OPS_PATH);
 using YAML
 using ops
+using JSON
+using PyCall
+
+# Import operators from python
+py"""
+import sys
+sys.path.insert(0, "/home/alex/awesome/FlowJl/ops")
+"""
+ops_py = pyimport("ops")
+
 
 
 function exec_block(block, ref)
@@ -11,14 +22,18 @@ function exec_block(block, ref)
     out = get(block, "out", []);
     if endswith(block["f"], ".yaml") # subflow
         result = exec_flow(block["f"], args);
-    else # operator
-        op = getfield(ops, Symbol(block["f"]));
-        result = op(args...; kwargs...);
+    else
+        try # try julia operator
+            op = getfield(ops, Symbol(block["f"]));
+        catch # try python operator
+            op = ops_py[block["f"]]
+        end
+        result = op(args...; kwargs...)
     end
 
     if length(out)==1 result=[result] end
 
-    return Dict(out[i] => result[i] for i = 1: length(out));
+    return Dict(out[i] => result[i] for i = 1:length(out));
 end
 
 
@@ -39,3 +54,4 @@ end
 flowfile = "/home/alex/awesome/FlowJl/flows/example.yaml";
 flow = YAML.load(open(flowfile));
 a = exec_flow(flowfile, []);
+print(a)

@@ -13,9 +13,11 @@ flow:
       - data
       - classes
   -
-    f: return_int
+    f: give_int
     args:
       - int
+    kwargs:
+      b: 10
     out:
       - a
 out:
