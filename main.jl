@@ -25,13 +25,14 @@ function exec_block(block, ref)
     else
         try # try julia operator
             op = getfield(ops, Symbol(block["f"]));
+            result = op(args...; kwargs...);
         catch # try python operator
-            op = ops_py[block["f"]]
+            op = ops_py[block["f"]];
+            result = op(args...; kwargs...);
         end
-        result = op(args...; kwargs...)
     end
 
-    if length(out)==1 result=[result] end
+    if length(out)==1 result=[result] end;
 
     return Dict(out[i] => result[i] for i = 1:length(out));
 end

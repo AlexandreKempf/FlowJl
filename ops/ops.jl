@@ -1,3 +1,3 @@
 module ops
-include("_loaders.jl")
+include("julia/loaders.jl")
 end
