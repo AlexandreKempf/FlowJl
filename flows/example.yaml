@@ -2,7 +2,6 @@ args:
 
 kwargs:
   data_path: "/home/alex/awesome/FlowJl/datasets/data.yaml"
-  int: 32
 
 flow:
   -
@@ -13,7 +12,8 @@ flow:
       - data
       - classes
   -
-    f: one_hot
+    f: /home/alex/awesome/FlowJl/flows/subflow.yaml
+    map: true
     args:
       - data
     kwargs:

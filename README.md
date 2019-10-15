@@ -8,12 +8,19 @@
 
 ## Get Started
 
+## Features
+subflows
+kwargs in parents >> kwargs in children
+map for loop over args for function and subflows
 
 ## TODO
 
 - [x] handle Python operators
 - [ ] handle R operators
-- [ ] handle tranformers with a "transformer" boolean in the yaml
-- [ ] save config and git reference in json
+- [x] handle loop on all args, not on kwargs
+- [ ] parallel loop for the map
+- [x] save config
+- [ ] automatic documentation
+- [ ] save git reference in json
 - [ ] create a mongodb to store experiments
 - [ ] docker everthing

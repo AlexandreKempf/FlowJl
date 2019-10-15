@@ -1,23 +1,18 @@
 args:
-  - data_p
+  - data
 
 kwargs:
-  intmax: 60
+  classes: [1]
 
 flow:
   -
-    f: load_data
+    f: one_hot
     args:
-      - data_p
+      - data
     kwargs:
-      param: 32
-      param2: :intmax
+      classes: :classes
     out:
       - data
-      - classes
-      - param3
-      - param4
 
 out:
-  - param3
-  - param4
+  - data

@@ -14,6 +14,7 @@ function load_data(path)
     return [el for el in zip(inputs, labels)], classes
 end
 
-function return_int(int)
-    return int
+function load_data2(data; param, param2)
+    param = param + param2
+    return param, param2
 end

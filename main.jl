@@ -12,47 +12,73 @@ sys.path.insert(0, "/home/alex/awesome/FlowJl/ops")
 """
 ops_py = pyimport("ops")
 
-
-
 function exec_block(block, ref)
+    config = block
     args = get(block, "args", []);
     args = [ref[k] for k in args];
     kwargs = get(block, "kwargs", Dict());
-    kwargs = Dict(if typeof(v)==String && v[1] == ':' Symbol(k) => ref[v[2:end]] else Symbol(k) => v end for (k,v) in kwargs);
+    kwargs = Dict(if typeof(v)==String && v[1] == ':'; k => ref[v[2:end]] else k => v end for (k,v) in kwargs);
     out = get(block, "out", []);
-    if endswith(block["f"], ".yaml") # subflow
-        result = exec_flow(block["f"], args);
+
+    if block["f"] isa Dict || endswith(block["f"], ".yaml") # subflow
+        if block["f"] isa String
+            block["f"] = YAML.load(open(block["f"]))
+        end
+        if get(block, "map", false)
+            map_result = []
+            for arg in zip(args...)
+                result, config["f"] = exec_flow(block["f"], arg, kwargs);
+                push!(map_result, result)
+            end
+            result = collect(zip(map_result...))
+        else
+            result, config["f"] = exec_flow(block["f"], args, kwargs);
+        end
+
     else
         try # try julia operator
-            op = getfield(ops, Symbol(block["f"]));
-            result = op(args...; kwargs...);
+            global op = getfield(ops, Symbol(block["f"]));
         catch # try python operator
-            op = ops_py[block["f"]];
+            global op = ops_py[block["f"]];
+        end
+
+        kwargs = Dict(Symbol(k) => v for (k, v) in kwargs)
+
+        if get(block, "map", false)
+            map_result = []
+            for arg in zip(args...)
+                push!(map_result, op(arg...; kwargs...))
+            end
+            result = collect(zip(map_result...))
+        else
             result = op(args...; kwargs...);
         end
     end
 
-    if length(out)==1 result=[result] end;
-
-    return Dict(out[i] => result[i] for i = 1:length(out));
+    if length(out)==1; result=[result] end;
+    return Dict(out[i] => result[i] for i = 1:length(out)), config;
 end
 
 
-function exec_flow(yaml, args)
-    flow = YAML.load(open(yaml));
-    subargs = get(flow, "args", []);
+function exec_flow(flow, global_args=nothing, global_kwargs=nothing)
+    global_args === nothing ? global_args = [] : nothing
+    global_kwargs === nothing ? global_kwargs = Dict() : nothing
+    config = flow
+    config["f"] = []
+    local_args = get(flow, "args", []);
+    local_kwargs = get(flow, "kwargs", Dict());
     out = get(flow, "out", []);
-    ref = Dict(subargs[i] => args[i] for i = 1:length(args));
-    ref = merge(ref, get(flow, "kwargs", Dict()));
+    ref = Dict(local_args[i] => global_args[i] for i = 1:length(global_args));
+    ref = merge(ref, local_kwargs);
+    ref = merge(ref, global_kwargs);
     for block in flow["flow"]
-        subout = exec_block(block, ref);
+        subout, block_config = exec_block(block, ref);
+        push!(config["f"], block_config)
         ref = merge(ref, subout);
     end
-    return [ref[k] for k in out];
+    return [ref[k] for k in out], config;
 end
 
-
-flowfile = "/home/alex/awesome/FlowJl/flows/example.yaml";
-flow = YAML.load(open(flowfile));
-a = exec_flow(flowfile, []);
-print(a)
+yaml = "/home/alex/awesome/FlowJl/flows/example.yaml";
+flow = YAML.load(open(yaml));
+result, config = exec_flow(flow);
