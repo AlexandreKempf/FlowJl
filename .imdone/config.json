@@ -17,10 +17,16 @@
       "XXX",
       "IDEA",
       "NOTE",
-      "REVIEW"
+      "REVIEW",
+      "MARK",
+      "HELP"
     ]
   },
   "lists": [
+    {
+      "name": "HELP",
+      "hidden": false
+    },
     {
       "name": "TODO",
       "hidden": true
@@ -33,5 +39,11 @@
     "pedantic": false,
     "smartLists": true,
     "langPrefix": "language-"
-  }
+  },
+  "sync": {
+    "id": "5d9f46efb667c06aa78184ff",
+    "name": "AlexandreKempf/FlowJl",
+    "useImdoneioForPriority": true
+  },
+  "noHelp": true
 }
