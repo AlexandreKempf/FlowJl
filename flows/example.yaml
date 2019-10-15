@@ -13,14 +13,13 @@ flow:
       - data
       - classes
   -
-    f: give_int
+    f: one_hot
     args:
-      - int
+      - data
     kwargs:
-      b: 10
+      classes: :classes
     out:
-      - a
+      - data
 out:
     - data
     - classes
-    - a
