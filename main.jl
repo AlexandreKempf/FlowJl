@@ -2,8 +2,8 @@ OPS_PATH = "/home/alex/awesome/FlowJl/ops";
 push!(LOAD_PATH, OPS_PATH);
 using YAML
 using ops
-using JSON
 using PyCall
+using JSON2
 
 # Import operators from python
 py"""
@@ -63,8 +63,8 @@ end
 function exec_flow(flow, global_args=nothing, global_kwargs=nothing)
     global_args === nothing ? global_args = [] : nothing
     global_kwargs === nothing ? global_kwargs = Dict() : nothing
-    config = flow
-    config["f"] = []
+    config = deepcopy(flow)
+    config["flow"] = []
     local_args = get(flow, "args", []);
     local_kwargs = get(flow, "kwargs", Dict());
     out = get(flow, "out", []);
@@ -73,7 +73,7 @@ function exec_flow(flow, global_args=nothing, global_kwargs=nothing)
     ref = merge(ref, global_kwargs);
     for block in flow["flow"]
         subout, block_config = exec_block(block, ref);
-        push!(config["f"], block_config)
+        push!(config["flow"], block_config)
         ref = merge(ref, subout);
     end
     return [ref[k] for k in out], config;
@@ -82,3 +82,7 @@ end
 yaml = "/home/alex/awesome/FlowJl/flows/example.yaml";
 flow = YAML.load(open(yaml));
 result, config = exec_flow(flow);
+
+open("saved_config.json", "w") do file
+    write(file, JSON2.write(config))
+end

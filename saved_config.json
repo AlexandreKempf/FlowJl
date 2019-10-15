@@ -1,0 +1,61 @@
+{
+  "kwargs": {
+    "data_path": "/home/alex/awesome/FlowJl/datasets/data.yaml"
+  },
+  "out": [
+    "data",
+    "classes"
+  ],
+  "args": null,
+  "flow": [
+    {
+      "f": "load_data",
+      "out": [
+        "data",
+        "classes"
+      ],
+      "args": [
+        "data_path"
+      ]
+    },
+    {
+      "f": {
+        "kwargs": {
+          "classes": [
+            1
+          ]
+        },
+        "out": [
+          "data"
+        ],
+        "args": [
+          "data"
+        ],
+        "flow": [
+          {
+            "f": "one_hot",
+            "kwargs": {
+              "classes": ":classes"
+            },
+            "out": [
+              "data"
+            ],
+            "args": [
+              "data"
+            ]
+          }
+        ]
+      },
+      "map": true,
+      "kwargs": {
+        "classes": ":classes"
+      },
+      "out": [
+        "data"
+      ],
+      "args": [
+        "data"
+      ]
+    }
+  ]
+}
