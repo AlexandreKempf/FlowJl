@@ -34,13 +34,11 @@ flow:
 
   - # imgaug Add
     f: imgaug
-    map: true
     args:
       - imgs
     kwargs:
-      transform: Add
-      sometimes: 0.5
-      value: -100
+      transforms:
+        - {"f": "Add", "sometimes": 0.5, "value": -100}
     out:
       - imgs
 

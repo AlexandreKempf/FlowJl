@@ -91,9 +91,6 @@ function exec_flow(flow, global_args=nothing, global_kwargs=nothing)
     return [ref[k] for k in out], config;
 end
 
-using BenchmarkTools
-using Images
-using ImageView
 
 yaml = "/home/alex/awesome/FlowJl/flows/augmenters.yaml";
 flow = YAML.load(open(yaml));
