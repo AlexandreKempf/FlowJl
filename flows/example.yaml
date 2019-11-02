@@ -10,7 +10,10 @@ flow:
       - data_path
     out:
       - data
+      - labels
       - classes
+      - root
+
   -
     f: /home/alex/awesome/FlowJl/flows/subflow.yaml
     map: true

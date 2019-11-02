@@ -1,4 +1,4 @@
-root: /home/alex/awesome/ZooM/datasets/data/
+root: /home/alex/awesome/FlowJl/datasets/data/
 inputs:
   - 1_01.png
   - 1_02.png

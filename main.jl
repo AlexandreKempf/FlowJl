@@ -19,7 +19,6 @@ function exec_block(block, ref)
     kwargs = get(block, "kwargs", Dict());
     kwargs = Dict(if typeof(v)==String && v[1] == ':'; k => ref[v[2:end]] else k => v end for (k,v) in kwargs);
     out = get(block, "out", []);
-
     if block["f"] isa Dict || endswith(block["f"], ".yaml") # subflow
         if block["f"] isa String
             block["f"] = YAML.load(open(block["f"]))
@@ -30,7 +29,13 @@ function exec_block(block, ref)
                 result, config["f"] = exec_flow(block["f"], arg, kwargs);
                 push!(map_result, result)
             end
-            result = collect(zip(map_result...))
+
+            if isempty(out)
+                result = []
+            else
+                if length(out)==1; map_result=[map_result] end
+                result = collect(zip(map_result...))
+            end
         else
             result, config["f"] = exec_flow(block["f"], args, kwargs);
         end
@@ -49,7 +54,14 @@ function exec_block(block, ref)
             for arg in zip(args...)
                 push!(map_result, op(arg...; kwargs...))
             end
-            result = collect(zip(map_result...))
+
+            if isempty(out)
+                result = []
+            elseif length(out)==1
+                result = map_result
+            else
+                result = collect(zip(map_result...))
+            end;
         else
             result = op(args...; kwargs...);
         end
@@ -79,10 +91,20 @@ function exec_flow(flow, global_args=nothing, global_kwargs=nothing)
     return [ref[k] for k in out], config;
 end
 
-yaml = "/home/alex/awesome/FlowJl/flows/example.yaml";
+using BenchmarkTools
+using Images
+using ImageView
+
+yaml = "/home/alex/awesome/FlowJl/flows/augmenters.yaml";
 flow = YAML.load(open(yaml));
 result, config = exec_flow(flow);
 
-open("saved_config.json", "w") do file
-    write(file, JSON2.write(config))
-end
+
+
+
+
+
+# # Save config as txt
+# open("saved_config.json", "w") do file
+#     write(file, JSON2.write(config))
+# end

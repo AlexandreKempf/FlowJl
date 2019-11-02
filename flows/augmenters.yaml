@@ -1,0 +1,68 @@
+args:
+
+kwargs:
+  data_path: "/home/alex/awesome/FlowJl/datasets/data.yaml"
+
+flow:
+  - # Load dataset
+    f: load_data
+    args:
+      - data_path
+    out:
+      - inputs
+      - labels
+      - classes
+      - root
+
+  - # Load images
+    f: load_img
+    map: true
+    args:
+      - inputs
+    out:
+      - imgs
+
+  - # transform to one_hot
+    f: one_hot
+    map: true
+    args:
+      - labels
+    kwargs:
+      classes: :classes
+    out:
+      - labels
+
+  - # imgaug Add
+    f: imgaug
+    map: true
+    args:
+      - imgs
+    kwargs:
+      transform: Add
+      sometimes: 0.5
+      value: -100
+    out:
+      - imgs
+
+  - # create saving directory
+    f: replace
+    map: true
+    args:
+      - inputs
+    kwargs:
+      old: :root
+      new: /home/alex/awesome/FlowJl/tmp/save/
+    out:
+      - save_path
+
+  - # save images
+    f: save_img
+    map: true
+    args:
+      - imgs
+      - save_path
+
+out:
+    - imgs
+    - labels
+    - classes
