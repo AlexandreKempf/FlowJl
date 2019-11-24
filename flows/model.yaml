@@ -1,0 +1,89 @@
+args:
+
+kwargs:
+  data_path: "/home/alex/awesome/FlowJl/datasets/data.yaml"
+
+flow:
+  - # Load dataset
+    f: load_data
+    args:
+      - data_path
+    out:
+      - inputs
+      - labels
+      - classes
+      - root
+
+  - # Load images
+    f: load_img
+    map: true
+    args:
+      - inputs
+    out:
+      - imgs
+
+  - # transform to one_hot
+    f: one_hot
+    map: true
+    args:
+      - labels
+    kwargs:
+      classes: :classes
+    out:
+      - labels
+  -
+    f: VGG
+    kwargs:
+      blueprint: [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M']
+      classes: :classes
+    out:
+      - model
+
+  -
+    f: fit
+    args:
+      - model
+    kwargs:
+      data:
+        images:
+        bounding_boxes:
+      parameters:
+        epoch: 100
+        batch_size: 64
+        validation_split: 0.1
+      augmentation:
+        - {"f": "Add", "sometimes": 0.5, "value": -100}
+      optimizer:
+        name: Adam
+        lr: 0.001
+      scheduler:
+        name: StepLR
+        gamma: 0.1
+        step_size: 30
+      loss:
+        name: CrossEntropyLoss
+
+
+  - # create saving directory
+    f: replace
+    map: true
+    args:
+      - inputs
+    kwargs:
+      old: :root
+      new: /home/alex/awesome/FlowJl/tmp/save/
+    out:
+      - save_path
+
+  - # save images
+    f: save_img
+    map: true
+    args:
+      - imgs
+      - save_path
+
+out:
+    - imgs
+    - labels
+    - classes
+    - model

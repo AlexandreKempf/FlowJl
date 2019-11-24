@@ -92,10 +92,9 @@ function exec_flow(flow, global_args=nothing, global_kwargs=nothing)
 end
 
 
-yaml = "/home/alex/awesome/FlowJl/flows/augmenters.yaml";
+yaml = "/home/alex/awesome/FlowJl/flows/model.yaml";
 flow = YAML.load(open(yaml));
 result, config = exec_flow(flow);
-
 
 
 

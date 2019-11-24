@@ -17,16 +17,22 @@
 ## TODO
 
 - [x] handle Python operators
-- [ ] handle R operators
-- [ ] define types for datasets, images ...
 - [x] handle loop on all args, not on kwargs
-- [ ] parallel loop for the map
 - [x] generalized the imgaug with bounding boxs, labels ...
-- [ ] test imgaug with bounding boxs, labels ...
 - [x] save config
-- [ ] save git reference in json
-- [ ] create a mongodb to store experiments
-- [ ] docker everthing
 - [x] handle no output for a block or a flow
 - [x] save, replace ... make them usable despite the interference (use Base.replace in the replace function ?)
+
+- [ ] implement dataset and imgaug on dataset for training
+- [ ] implement dataloader for training
+- [ ] implement validation set
+- [ ] generate dataset easily to test models (MNIST, iris, ...)
+- [ ] test and generate a few models
+- [ ] change dimensions of images for python operators
+- [ ] define types for datasets, images ...
 - [ ] overwrite function save, load ... based on type
+- [ ] parallel loop for the map
+- [ ] test imgaug with bounding boxs, labels ...
+- [ ] save git reference in json
+- [ ] create a mongodb to store experiments
+- [ ] docker everything
